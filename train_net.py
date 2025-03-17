@@ -3,6 +3,7 @@ import itertools
 import weakref
 from typing import Any, Dict, List, Set
 import logging
+from dotenv import load_dotenv
 from collections import OrderedDict
 
 from detectron2.utils.events import EventWriter, get_event_storage
@@ -240,7 +241,7 @@ class Trainer(DefaultTrainer):
             ret.append(hooks.PeriodicWriter(self.build_writers(), period=100))
             ret.append(hooks.PeriodicWriter(
                 [WandB_Printer(project=cfg.LOGGER.PROJECT,
-                               entity=cfg.LOGGER.ENTITY, name=cfg.task)],  period=100))
+                               entity=cfg.LOGGER.ENTITY, name=cfg.task)], period=10))
         return ret
 
 
@@ -248,7 +249,9 @@ class Trainer(DefaultTrainer):
 class WandB_Printer(EventWriter):
     def __init__(self, project, entity, name=None) -> None:
         self._window_size = 20
-        wandb.login()
+        load_dotenv()
+        WDB = os.getenv('WANDB_API_KEY')
+        wandb.login(key=WDB)
         self.wandb = wandb.init(project=project, entity=entity, name=name)
 
     def write(self):

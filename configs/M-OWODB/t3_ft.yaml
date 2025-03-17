@@ -10,8 +10,8 @@ DATASETS:
   TRAIN: ("my_train",)
   TEST:  ("my_val",)
 SOLVER:
-  STEPS: (100,)
-  MAX_ITER: 300
+  STEPS: (20,)
+  MAX_ITER: 1000
 TEST:
   EVAL_PERIOD: 300
   PREV_INTRODUCED_CLS: 40
