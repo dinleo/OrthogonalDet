@@ -285,7 +285,7 @@ def setup(args):
 
 def main(args):
     cfg = setup(args)
-    data_register = Register('./datasets/', args.task, cfg)
+    data_register = Register("/kaggle/input/orthogonaldet/datasets", args.task, cfg)
     data_register.register_dataset()
     if args.eval_only:
         model = Trainer.build_model(cfg)
