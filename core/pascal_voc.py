@@ -97,7 +97,7 @@ def load_voc_instances(dirname: str, split: str, class_names: Union[List[str], T
         class_names: list or tuple of class names
     """
     with PathManager.open(os.path.join(dirname, "ImageSets", "Main", split + ".txt")) as f:
-        fileids = np.loadtxt(f, dtype=np.str)
+        fileids = np.loadtxt(f, dtype=str)
 
     # Needs to read many small annotation files. Makes sense at local
     annotation_dirname = PathManager.get_local_path(os.path.join(dirname, "Annotations/"))
@@ -127,8 +127,8 @@ def load_voc_instances(dirname: str, split: str, class_names: Union[List[str], T
             with PathManager.open(anno_file) as f:
                 tree = ET.parse(f)
         except:
-            logger = logging.getLogger(__name__)
-            logger.info('Not able to load: ' + anno_file + '. Continuing without aboarting...')
+            # logger = logging.getLogger(__name__)
+            # logger.info('Not able to load: ' + anno_file + '. Continuing without aboarting...')
             continue
 
         r = {
@@ -164,6 +164,7 @@ def load_voc_instances(dirname: str, split: str, class_names: Union[List[str], T
             )
         r["annotations"] = instances
         dicts.append(r)
+    print(split, len(dicts), class_names, '\n')
     return dicts
 
 

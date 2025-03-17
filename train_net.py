@@ -24,6 +24,7 @@ from core.util.model_ema import add_model_ema_configs, may_build_model_ema, may_
     apply_model_ema_and_restore, EMADetectionCheckpointer
 from core.pascal_voc import register_pascal_voc
 from core.pascal_voc_evaluation import PascalVOCDetectionEvaluator
+import wandb
 
 
 class Register:
@@ -55,6 +56,10 @@ class Trainer(DefaultTrainer):
         """
         super(DefaultTrainer, self).__init__()  # call grandfather's `__init__` while avoid father's `__init()`
         logger = logging.getLogger("detectron2")
+        self.wandb_logger = wandb.init(
+            entity=cfg.LOGGER.ENTITY,
+            project=cfg.LOGGER.PROJECT,
+        )
         if not logger.isEnabledFor(logging.INFO):  # setup_logger is not called for d2
             setup_logger()
         cfg = DefaultTrainer.auto_scale_workers(cfg, comm.get_world_size())
