@@ -279,8 +279,8 @@ def parse_rec(filename, known_classes):
         with PathManager.open(filename) as f:
             tree = ET.parse(f)
     except:
-        logger = logging.getLogger(__name__)
-        logger.info('Not able to load: ' + filename + '. Continuing without aborting...')
+        # logger = logging.getLogger(__name__)
+        # logger.info('Not able to load: ' + filename + '. Continuing without aborting...')
         return None
 
     objects = []

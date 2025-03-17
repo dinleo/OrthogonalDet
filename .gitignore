@@ -132,3 +132,4 @@ dmypy.json
 output*/
 /datasets/*
 /test.py
+/wandb/*

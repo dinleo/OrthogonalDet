@@ -5,6 +5,9 @@ from typing import Any, Dict, List, Set
 import logging
 from collections import OrderedDict
 
+from detectron2.utils.events import EventWriter, get_event_storage
+from tqdm import tqdm
+
 import torch
 from fvcore.nn.precise_bn import get_bn_modules
 
@@ -56,10 +59,7 @@ class Trainer(DefaultTrainer):
         """
         super(DefaultTrainer, self).__init__()  # call grandfather's `__init__` while avoid father's `__init()`
         logger = logging.getLogger("detectron2")
-        self.wandb_logger = wandb.init(
-            entity=cfg.LOGGER.ENTITY,
-            project=cfg.LOGGER.PROJECT,
-        )
+        self.showTQDM = tqdm(range(cfg.SOLVER.MAX_ITER))
         if not logger.isEnabledFor(logging.INFO):  # setup_logger is not called for d2
             setup_logger()
         cfg = DefaultTrainer.auto_scale_workers(cfg, comm.get_world_size())
@@ -237,9 +237,36 @@ class Trainer(DefaultTrainer):
         if comm.is_main_process():
             # Here the default print/log frequency of each writer is used.
             # run writers in the end, so that evaluation metrics are written
-            ret.append(hooks.PeriodicWriter(self.build_writers(), period=20))
+            ret.append(hooks.PeriodicWriter(self.build_writers(), period=10))
+            ret.append(hooks.PeriodicWriter(
+                [WandB_Printer(project=cfg.LOGGER.PROJECT,
+                               entity=cfg.LOGGER.ENTITY)], period=1))
         return ret
 
+
+
+class WandB_Printer(EventWriter):
+    def __init__(self, project, entity) -> None:
+        self._window_size = 20
+        wandb.login()
+        self.wandb = wandb.init(project=project, entity=entity)
+
+    def write(self):
+        storage = get_event_storage()
+
+        sendDict = self._makeStorageDict(storage)
+        self.wandb.log(sendDict)
+
+    def _makeStorageDict(self, storage):
+        storageDict = {}
+        for k, v in [(k, f"{v.median(self._window_size):.4g}") for k, v in storage.histories().items()]:
+            if "AP" in k:
+                # AP to mAP
+                storageDict[k] = float(v) * 0.01
+            else:
+                storageDict[k] = float(v)
+
+        return storageDict
 
 def setup(args):
     """
@@ -248,6 +275,7 @@ def setup(args):
     cfg = get_cfg()
     add_config(cfg)
     add_model_ema_configs(cfg)
+    cfg.set_new_allowed(True)
     cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
     cfg.freeze()
