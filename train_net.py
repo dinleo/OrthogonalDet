@@ -237,19 +237,19 @@ class Trainer(DefaultTrainer):
         if comm.is_main_process():
             # Here the default print/log frequency of each writer is used.
             # run writers in the end, so that evaluation metrics are written
-            ret.append(hooks.PeriodicWriter(self.build_writers(), period=10))
+            ret.append(hooks.PeriodicWriter(self.build_writers(), period=100))
             ret.append(hooks.PeriodicWriter(
                 [WandB_Printer(project=cfg.LOGGER.PROJECT,
-                               entity=cfg.LOGGER.ENTITY)], period=1))
+                               entity=cfg.LOGGER.ENTITY, name=cfg.task)],  period=100))
         return ret
 
 
 
 class WandB_Printer(EventWriter):
-    def __init__(self, project, entity) -> None:
+    def __init__(self, project, entity, name=None) -> None:
         self._window_size = 20
         wandb.login()
-        self.wandb = wandb.init(project=project, entity=entity)
+        self.wandb = wandb.init(project=project, entity=entity, name=name)
 
     def write(self):
         storage = get_event_storage()
@@ -278,6 +278,7 @@ def setup(args):
     cfg.set_new_allowed(True)
     cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
+    cfg.task = args.task
     cfg.freeze()
     default_setup(cfg, args)
     return cfg
@@ -302,7 +303,8 @@ def main(args):
         return res
 
     trainer = Trainer(cfg)
-    trainer.resume_or_load(resume=args.resume)
+    trainer.resume_or_load(resume=False)
+
     return trainer.train()
 
 
