@@ -5,11 +5,11 @@ PORT=${PORT:-"50210"}
 set -e
 
 if [ $BENCHMARK == "M-OWODB" ]; then
-  python train_net.py --num-gpus 1 --dist-url tcp://127.0.0.1:${PORT} --task ${BENCHMARK}/t1 --config-file configs/${BENCHMARK}/t1.yaml
+#  python train_net.py --num-gpus 1 --dist-url tcp://127.0.0.1:${PORT} --task ${BENCHMARK}/t1 --config-file configs/${BENCHMARK}/t1.yaml
+#
+#  python upload_hf.py
 
-  python upload_hf.py
-
-  python train_net.py --num-gpus 1 --dist-url tcp://127.0.0.1:${PORT} --task ${BENCHMARK}/t2 --config-file configs/${BENCHMARK}/t2.yaml
+  python train_net.py --num-gpus 1 --dist-url tcp://127.0.0.1:${PORT} --task ${BENCHMARK}/t2 --config-file configs/${BENCHMARK}/t2.yaml --resume MODEL.WEIGHTS output/${BENCHMARK}/t1.pth
 
   python train_net.py --num-gpus 1 --dist-url tcp://127.0.0.1:${PORT} --task ${BENCHMARK}/t2_ft --config-file configs/${BENCHMARK}/t2_ft.yaml --resume MODEL.WEIGHTS output/${BENCHMARK}/t2.pth
 
