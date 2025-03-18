@@ -229,6 +229,8 @@ class Trainer(DefaultTrainer):
 
         def test_and_save_results():
             self._last_eval_results = self.test(self.cfg, self.model)
+            task = cfg.task.split('/')[1]
+            self.checkpointer.save(task)
             return self._last_eval_results
 
         # Do evaluation after checkpointer, because then if it fails,
@@ -238,7 +240,7 @@ class Trainer(DefaultTrainer):
         if comm.is_main_process():
             # Here the default print/log frequency of each writer is used.
             # run writers in the end, so that evaluation metrics are written
-            ret.append(hooks.PeriodicWriter(self.build_writers(), period=100))
+            ret.append(hooks.PeriodicWriter(self.build_writers(), period=1))
             ret.append(hooks.PeriodicWriter(
                 [WandB_Printer(project=cfg.LOGGER.PROJECT,
                                entity=cfg.LOGGER.ENTITY, name=cfg.task)], period=10))
@@ -252,7 +254,7 @@ class WandB_Printer(EventWriter):
         load_dotenv()
         WDB = os.getenv('WANDB_API_KEY')
         wandb.login(key=WDB)
-        self.wandb = wandb.init(project=project, entity=entity, name=name)
+        self.wandb = wandb.init(project=project, entity=entity, name='test')
 
     def write(self):
         storage = get_event_storage()

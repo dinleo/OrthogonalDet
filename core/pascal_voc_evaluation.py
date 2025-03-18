@@ -419,6 +419,7 @@ def voc_eval(detpath, annopath, imagesetfile, classname, ovthresh=0.5, use_07_me
     # if 'unknown' not in classname:
     #     return tp, fp, 0
     #     print(2,image_ids)
+    print('ND:', nd)
     for d in range(nd):
         R = class_recs[mapping[int(image_ids[d])]]
         bb = BB[d, :].astype(float)
