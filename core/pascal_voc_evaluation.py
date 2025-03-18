@@ -419,7 +419,6 @@ def voc_eval(detpath, annopath, imagesetfile, classname, ovthresh=0.5, use_07_me
     # if 'unknown' not in classname:
     #     return tp, fp, 0
     #     print(2,image_ids)
-    print('ND:', nd)
     for d in range(nd):
         R = class_recs[mapping[int(image_ids[d])]]
         bb = BB[d, :].astype(float)
@@ -461,7 +460,7 @@ def voc_eval(detpath, annopath, imagesetfile, classname, ovthresh=0.5, use_07_me
     # compute precision recall
     fp = np.cumsum(fp)
     tp = np.cumsum(tp)
-    rec = tp / float(npos)
+    rec = tp / (float(npos) + 1e-10)
     # avoid divide by zero in case the first detection matches a difficult
     # ground truth
     prec = tp / np.maximum(tp + fp, np.finfo(np.float64).eps)

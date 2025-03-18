@@ -240,7 +240,7 @@ class Trainer(DefaultTrainer):
         if comm.is_main_process():
             # Here the default print/log frequency of each writer is used.
             # run writers in the end, so that evaluation metrics are written
-            ret.append(hooks.PeriodicWriter(self.build_writers(), period=1))
+            ret.append(hooks.PeriodicWriter(self.build_writers(), period=100))
             ret.append(hooks.PeriodicWriter(
                 [WandB_Printer(project=cfg.LOGGER.PROJECT,
                                entity=cfg.LOGGER.ENTITY, name=cfg.task)], period=10))
@@ -254,7 +254,7 @@ class WandB_Printer(EventWriter):
         load_dotenv()
         WDB = os.getenv('WANDB_API_KEY')
         wandb.login(key=WDB)
-        self.wandb = wandb.init(project=project, entity=entity, name='test')
+        self.wandb = wandb.init(project=project, entity=entity, name=name)
 
     def write(self):
         storage = get_event_storage()
