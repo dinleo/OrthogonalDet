@@ -165,8 +165,8 @@ def load_voc_instances(dirname: str, split: str, class_names: Union[List[str], T
         r["annotations"] = instances
         dicts.append(r)
     BENCHMARK, task = split.split("/")
-    if task == 'test':
-        dicts = dicts[:500]
+    # if task == 'test':
+    #     dicts = dicts[:100]
     print(f'BENCHMARK: {BENCHMARK} task: {task} len: {len(dicts)}')
     return dicts
 

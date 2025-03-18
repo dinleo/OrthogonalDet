@@ -254,7 +254,7 @@ class WandB_Printer(EventWriter):
         load_dotenv()
         WDB = os.getenv('WANDB_API_KEY')
         wandb.login(key=WDB)
-        self.wandb = wandb.init(project=project, entity=entity, name=name)
+        self.wandb = wandb.init(project=project, entity=entity, name='conti/' + name)
 
     def write(self):
         storage = get_event_storage()
