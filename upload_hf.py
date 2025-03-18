@@ -13,3 +13,12 @@ api.upload_folder(
     repo_type="model",
     token=HUG
 )
+
+# f = api.hf_hub_download(
+#     repo_id="dinleo11/OrthogonalDet",
+#     filename="t1.pth",
+#     subfolder="kaggle/train_30000/M-OWODB",
+#     repo_type="model",
+#     token=HUG,
+#     local_dir='./'
+# )

@@ -13,6 +13,8 @@ if [ $BENCHMARK == "M-OWODB" ]; then
 
   python train_net.py --num-gpus 1 --dist-url tcp://127.0.0.1:${PORT} --task ${BENCHMARK}/t2_ft --config-file configs/${BENCHMARK}/t2_ft.yaml --resume MODEL.WEIGHTS output/${BENCHMARK}/t2.pth
 
+  python upload_hf.py
+
   python train_net.py --num-gpus 1 --dist-url tcp://127.0.0.1:${PORT} --task ${BENCHMARK}/t3 --config-file configs/${BENCHMARK}/t3.yaml --resume MODEL.WEIGHTS output/${BENCHMARK}/t2_ft.pth
 
   python train_net.py --num-gpus 1 --dist-url tcp://127.0.0.1:${PORT} --task ${BENCHMARK}/t3_ft --config-file configs/${BENCHMARK}/t3_ft.yaml --resume MODEL.WEIGHTS output/${BENCHMARK}/t3.pth
