@@ -2,6 +2,7 @@
 
 BENCHMARK=${BENCHMARK:-"M-OWODB"}  # M-OWODB or S-OWODB
 PORT=${PORT:-"50210"}
+set -e
 
 # if raise error, change num_gpus to 1
 if [ $BENCHMARK == "M-OWODB" ]; then

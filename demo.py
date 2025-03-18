@@ -24,6 +24,7 @@ def setup_cfg(args):
     # load config from file and command-line arguments
     cfg = get_cfg()
     add_config(cfg)
+    cfg.set_new_allowed(True)
     cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
     # Set score_threshold for builtin models
@@ -53,14 +54,14 @@ def get_parser():
         '-c',
         "--confidence-threshold",
         type=float,
-        default=0.15,
+        default=0.5,
         help="Minimum score for instance predictions to be shown",
     )
     parser.add_argument(
         "--opts",
         help="Modify config options using the command-line 'KEY VALUE' pairs",
-        # default=['MODEL.WEIGHTS', 'output/M-OWODB/model_final.pth'],
-        default=['MODEL.WEIGHTS', 'output/backup/model_0109999.pth'],
+        default=['MODEL.WEIGHTS', 'output/model_final.pth'],
+        # default=['MODEL.WEIGHTS', 'output/backup/model_0109999.pth'],
         nargs=argparse.REMAINDER,
     )
     parser.add_argument('-u', '--unknown', action='store_true', help='emphasize unknown color')

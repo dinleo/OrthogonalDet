@@ -240,10 +240,10 @@ class Trainer(DefaultTrainer):
         if comm.is_main_process():
             # Here the default print/log frequency of each writer is used.
             # run writers in the end, so that evaluation metrics are written
-            ret.append(hooks.PeriodicWriter(self.build_writers(), period=100))
+            ret.append(hooks.PeriodicWriter(self.build_writers(), period=cfg.LOGGER.CLI_PER))
             ret.append(hooks.PeriodicWriter(
                 [WandB_Printer(project=cfg.LOGGER.PROJECT,
-                               entity=cfg.LOGGER.ENTITY, name=cfg.task)], period=10))
+                               entity=cfg.LOGGER.ENTITY, name=cfg.LOGGER.NAME)], period=cfg.LOGGER.WANDB_PER))
         return ret
 
 
@@ -284,6 +284,11 @@ def setup(args):
     cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
     cfg.task = args.task
+    if cfg.KAGGLE:
+        cfg.DATASET_DIR = "/kaggle/input/orthogonaldet/datasets"
+        cfg.SOLVER.IMS_PER_BATCH = 5
+        cfg.LOGGER.CLI_PER = 100
+        cfg.LOGGER.NAME = args.task
     cfg.freeze()
     default_setup(cfg, args)
     return cfg
@@ -291,7 +296,7 @@ def setup(args):
 
 def main(args):
     cfg = setup(args)
-    data_register = Register("/kaggle/input/orthogonaldet/datasets", args.task, cfg)
+    data_register = Register(cfg.DATASET_DIR, cfg.task, cfg)
     data_register.register_dataset()
     if args.eval_only:
         model = Trainer.build_model(cfg)

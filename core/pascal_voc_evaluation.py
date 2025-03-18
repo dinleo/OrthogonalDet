@@ -39,7 +39,7 @@ class PascalVOCDetectionEvaluator(DatasetEvaluator):
         self._anno_file_template = os.path.join(meta.dirname, "Annotations", "{}.xml")
         self._image_set_path = os.path.join(meta.dirname, 'ImageSets', 'Main', meta.split + '.txt')
         self._class_names = meta.thing_classes
-        self._is_2007 = False
+        self._is_2007 = True
         # self._is_2007 = meta.year == 2007
         self._cpu_device = torch.device("cpu")
         self._logger = logging.getLogger(__name__)
@@ -460,7 +460,7 @@ def voc_eval(detpath, annopath, imagesetfile, classname, ovthresh=0.5, use_07_me
     # compute precision recall
     fp = np.cumsum(fp)
     tp = np.cumsum(tp)
-    rec = tp / (float(npos) + 1e-10)
+    rec = tp / float(npos)
     # avoid divide by zero in case the first detection matches a difficult
     # ground truth
     prec = tp / np.maximum(tp + fp, np.finfo(np.float64).eps)
