@@ -54,13 +54,13 @@ def get_parser():
         '-c',
         "--confidence-threshold",
         type=float,
-        default=0.5,
+        default=0.3,
         help="Minimum score for instance predictions to be shown",
     )
     parser.add_argument(
         "--opts",
         help="Modify config options using the command-line 'KEY VALUE' pairs",
-        default=['MODEL.WEIGHTS', 'output/model_final.pth'],
+        default=['MODEL.WEIGHTS', 'output/M-OWODB/t1.pth'],
         # default=['MODEL.WEIGHTS', 'output/backup/model_0109999.pth'],
         nargs=argparse.REMAINDER,
     )

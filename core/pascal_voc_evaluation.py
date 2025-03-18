@@ -247,7 +247,60 @@ class PascalVOCDetectionEvaluator(DatasetEvaluator):
         # self._logger.info("P__: " + str(['%.1f' % x for x in list(np.mean([x for _, x in precs.items()], axis=0))]))
         # self._logger.info("P50: " + str(['%.1f' % x for x in precs[50]]))
         # self._logger.info("P75: " + str(['%.1f' % x for x in precs[75]]))
+        met = OrderedDict()
+        met["bbox"] = {
+            "AP": np.mean(list(mAP.values())),
+            "AP50": mAP[50],
+            "WI": wi,
+            "avg_precision_unknown": avg_precision_unk,
+            "total_num_unknowns": num_unks[50][0],
+        }
 
+        met["classwise_AP"] = {cls_name: ap for cls_name, ap in zip(self._class_names, aps[50])}
+        met["precisions"] = {"P50": np.mean(precs[50])}
+        met["recalls"] = {"R50": np.mean(recs[50])}
+        met["total_unknown_detections"] = unk_det_as_knowns[50]
+
+        if self.prev_intro_cls > 0:
+            met["previous_classes"] = {
+                "AP50": np.mean(aps[50][:self.prev_intro_cls]),
+                "Precisions50": np.mean(precs[50][:self.prev_intro_cls]),
+                "Recall50": np.mean(recs[50][:self.prev_intro_cls]),
+            }
+
+        met["current_classes"] = {
+            "AP50": np.mean(aps[50][self.prev_intro_cls:self.prev_intro_cls + self.curr_intro_cls]),
+            "Precisions50": np.mean(precs[50][self.prev_intro_cls:self.prev_intro_cls + self.curr_intro_cls]),
+            "Recall50": np.mean(recs[50][self.prev_intro_cls:self.prev_intro_cls + self.curr_intro_cls]),
+        }
+
+        met["known_classes"] = {
+            "AP50": np.mean(aps[50][:self.prev_intro_cls + self.curr_intro_cls]),
+            "Precisions50": np.mean(precs[50][:self.prev_intro_cls + self.curr_intro_cls]),
+            "Recall50": np.mean(recs[50][:self.prev_intro_cls + self.curr_intro_cls]),
+        }
+
+        met["unknown_classes"] = {
+            "AP50": aps[50][-1],
+            "Precisions50": precs[50][-1],
+            "Recall50": recs[50][-1],
+        }
+
+        def convert_to_serializable(obj):
+            if isinstance(obj, np.integer):
+                return int(obj)
+            elif isinstance(obj, np.floating):
+                return float(obj)
+            elif isinstance(obj, dict):
+                return {k: convert_to_serializable(v) for k, v in obj.items()}
+            elif isinstance(obj, list):
+                return [convert_to_serializable(i) for i in obj]
+            else:
+                return obj
+
+        json_filename = "output/evaluation_results.json"
+        with open(json_filename, "w") as json_file:
+            json.dump(convert_to_serializable(met), json_file, indent=4)
         return ret
 
 
