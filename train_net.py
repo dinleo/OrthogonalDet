@@ -287,7 +287,7 @@ def setup(args):
     cfg.eval_only = args.eval_only
     if cfg.KAGGLE:
         cfg.DATASET_DIR = "/kaggle/input/orothodet/datasets"
-        cfg.SOLVER.IMS_PER_BATCH = 5
+        cfg.SOLVER.IMS_PER_BATCH = 6
         cfg.LOGGER.CLI_PER = 250
         cfg.LOGGER.NAME = args.task
     cfg.freeze()
