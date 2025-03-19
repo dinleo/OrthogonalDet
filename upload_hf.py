@@ -9,7 +9,7 @@ api = HfApi()
 api.upload_folder(
     folder_path='output', # 폴더 안 내용물만 들어간다.
     repo_id="dinleo11/OrthogonalDet", # 레포 주소
-    path_in_repo="kaggle/train_30000P", # 레포 내 저장할 폴더
+    path_in_repo="kaggle/train_t1", # 레포 내 저장할 폴더
     repo_type="model",
     token=HUG
 )
