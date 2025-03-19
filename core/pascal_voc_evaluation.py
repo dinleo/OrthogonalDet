@@ -53,6 +53,7 @@ class PascalVOCDetectionEvaluator(DatasetEvaluator):
             self.unknown_class_index = self.total_num_class - 1
             self.num_seen_classes = self.prev_intro_cls + self.curr_intro_cls
             self.known_classes = self._class_names[:self.num_seen_classes]
+            self.task = cfg.task
 
     def reset(self):
         self._predictions = defaultdict(list)  # class name -> list of prediction strings
@@ -298,7 +299,7 @@ class PascalVOCDetectionEvaluator(DatasetEvaluator):
             else:
                 return obj
 
-        json_filename = "output/evaluation_results.json"
+        json_filename = f"output/{self.task}_results.json"
         with open(json_filename, "w") as json_file:
             json.dump(convert_to_serializable(met), json_file, indent=4)
         return ret
