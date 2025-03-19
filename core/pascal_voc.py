@@ -5,6 +5,7 @@ from typing import List, Tuple, Union
 from fvcore.common.file_io import PathManager
 import itertools
 import logging
+import random
 
 from detectron2.data import DatasetCatalog, MetadataCatalog
 from detectron2.structures import BoxMode
@@ -164,10 +165,18 @@ def load_voc_instances(dirname: str, split: str, class_names: Union[List[str], T
             )
         r["annotations"] = instances
         dicts.append(r)
-    BENCHMARK, task = split.split("/")
-    # if task == 'test':
-    #     dicts = dicts[:100]
-    print(f'BENCHMARK: {BENCHMARK} task: {task} len: {len(dicts)}')
+
+    BENCHMARK1, BENCHMARK2 = split.split("/")
+    task = cfg.task.split("/")[1]
+    if BENCHMARK2 == 'test':
+        if cfg.KAGGLE:
+            if cfg.eval_only and cfg.KAGGLE:
+                dicts = dicts[4000:6000]
+            else:
+                dicts = dicts[4500:5000]
+        else:
+            dicts = dicts[:100]
+    print(f'BENCHMARK: ({BENCHMARK1}) DATA: ({BENCHMARK2}) LEN: ({len(dicts)}) MODEL: ({cfg.MODEL.WEIGHTS})')
     return dicts
 
 

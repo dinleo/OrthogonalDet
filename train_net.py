@@ -284,6 +284,7 @@ def setup(args):
     cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
     cfg.task = args.task
+    cfg.eval_only = args.eval_only
     if cfg.KAGGLE:
         cfg.DATASET_DIR = "/kaggle/input/orothodet/datasets"
         cfg.SOLVER.IMS_PER_BATCH = 5
