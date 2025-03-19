@@ -171,7 +171,7 @@ def load_voc_instances(dirname: str, split: str, class_names: Union[List[str], T
     if BENCHMARK2 == 'test':
         if cfg.KAGGLE:
             if cfg.eval_only and cfg.KAGGLE:
-                dicts = dicts[4000:6000]
+                dicts = dicts[2000:6000]
             else:
                 dicts = dicts[4500:5000]
         else:
